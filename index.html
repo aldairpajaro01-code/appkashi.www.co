@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kashi App | Descubre la Magia de Riohacha y La Guajira</title>
+  
+  <!-- Google Fonts & Leaflet CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <style>
+    :root {
+      --orange-primary: #E75119;
+      --orange-hover: #D0420E;
+      --orange-light: #FFEDE6;
+      --green-primary: #5C8B29;
+      --green-hover: #4B7321;
+      --green-light: #EDF6E5;
+      --green-dark: #375416;
+      --sage-green: #8CA366;
+      --sand-bg: #FAF6F0;
+      --sand-card: #F4EFEA;
+      --sand-border: #E8DFD5;
+      --text-dark: #2B2520;
+      --text-muted: #6B625B;
+      --text-light: #9C948D;
+      --white: #FFFFFF;
+      --shadow-sm: 0 2px 8px rgba(43, 37, 32, 0.05);
+      --shadow-md: 0 6px 20px rgba(43, 37, 32, 0.08);
+      --shadow-lg: 0 16px 36px rgba(43, 37, 32, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--sand-bg);
+      color: var(--text-dark);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* Top Global Notice Bar */
+    .top-notice {
+      background: var(--text-dark);
+      color: var(--sand-card);
+      font-size: 0.76rem;
+      padding: 7px 16px;
+      text-align: center;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+    }
+    .top-notice a {
+      color: #FFA375;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: rgba(250, 246, 240, 0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--sand-border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1000;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--orange-primary) 38%, var(--green-primary) 38%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 1.25rem;
+      font-weight: 800;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--green-primary);
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+
+    .logo-slogan {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--orange-primary);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-link {
+      color: var(--text-dark);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover {
+      color: var(--orange-primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Language Switcher */
+    .lang-switcher {
+      display: flex;
+      background: var(--sand-card);
+      border: 1px solid var(--sand-border);
+      border-radius: var(--radius-full);
+      padding: 3px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .lang-btn {
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active {
+      background: var(--orange-primary);
+      color: var(--white);
+    }
+
+    .btn-cta {
+      background: var(--orange-primary);
+      color: var(--white);
+      border: none;
+      padding: 9px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(231, 81, 25, 0.28);
+      transition: all 0.2s ease;
+    }
+
+    .btn-cta:hover {
+      background: var(--orange-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--green-primary);
+      border: 1.5px solid var(--green-primary);
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--green-light);
+    }
+
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding: 50px 0 40px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--orange-light);
+      color: var(--orange-primary);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 700;
+      width: fit-content;
+      border: 1px solid #FFD9CA;
+    }
+
+    .hero-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1.15;
+      letter-spacing: -1px;
+    }
+
+    .hero-title span.highlight-orange {
+      color: var(--orange-primary);
+    }
+
+    .hero-title span.highlight-green {
+      color: var(--green-primary);
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 540px;
+    }
+
+    .hero-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding-top: 20px;
+      border-top: 1px solid var(--sand-border);
+      margin-top: 10px;
+    }
+
+    .stat-item h4 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--green-primary);
+    }
+
+    .stat-item p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Hero Mockup Preview */
+    .hero-preview {
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone-mockup-card {
+      width: 320px;
+      background: var(--white);
+      border-radius: 34px;
+      border: 6px solid #231F1C;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .phone-notch {
+      width: 100px;
+      height: 16px;
+      background: #231F1C;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      margin: 0 auto;
+    }
+
+    .phone-header {
+      padding: 10px 14px;
+      background: var(--sand-bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--sand-border);
+    }
+
+    .phone-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--sand-bg);
+    }
+
+    .phone-map-snap {
+      width: 100%;
+      height: 190px;
+      border-radius: 16px;
+      background: #DEE8D3;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--sand-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .map-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .pin-pulse {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--orange-primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      box-shadow: 0 0 0 6px rgba(231, 81, 25, 0.25);
+    }
+
+    .phone-ar-banner {
+      background: linear-gradient(135deg, #2B2520, #171513);
+      color: white;
+      padding: 12px;
+      border-radius: 14px;
+      font-size: 0.75rem;
+    }
+
+    /* Section Styles */
+    .section-wrapper {
+      padding: 60px 0;
+      border-top: 1px solid var(--sand-border);
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 40px;
+    }
+
+    .section-pretitle {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--orange-primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .section-maintitle {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    /* Interactive Map Module */
+    .map-container-box {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--sand-border);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      min-height: 540px;
+    }
+
+    .map-sidebar {
+      padding: 20px;
+      background: var(--sand-card);
+      border-right: 1px solid var(--sand-border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+      max-height: 560px;
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-chip {
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.74rem;
+      font-weight: 700;
+      border: 1px solid var(--sand-border);
+      background: var(--white);
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .filter-chip.active {
+      background: var(--green-primary);
+      color: var(--white);
+      border-color: var(--green-primary);
+    }
+
+    .place-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .place-card {
+      background: var(--white);
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--sand-border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .place-card:hover {
+      border-color: var(--orange-primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .place-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .place-name {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .place-tag {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      background: var(--orange-light);
+      color: var(--orange-primary);
+    }
+
+    .place-desc {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    #riohacha-map {
+      width: 100%;
+      height: 560px;
+      z-index: 10;
+    }
+
+    /* AR Showcase Section */
+    .ar-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .ar-item-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      border: 1px solid var(--sand-border);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.2s;
+    }
+
+    .ar-item-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .ar-thumb {
+      height: 170px;
+      border-radius: 14px;
+      background: #E8E0D5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ar-thumb-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--orange-primary);
+      color: white;
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.65rem;
+      font-weight: 800;
+    }
+
+    .ar-item-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .ar-item-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Pricing Plans Section */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .pricing-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      border: 1px solid var(--sand-border);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .pricing-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+
+    .pricing-card.featured {
+      border: 2.5px solid var(--green-primary);
+      background: #FAFDF6;
+    }
+
+    .plan-badge-ribbon {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green-primary);
+      color: white;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .plan-header {
+      margin-bottom: 20px;
+    }
+
+    .plan-tier-name {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .plan-price {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--orange-primary);
+      margin: 10px 0 4px;
+    }
+
+    .plan-price span {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .plan-target {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .plan-feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .plan-feature-item {
+      font-size: 0.82rem;
+      color: var(--text-dark);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .plan-feature-item svg {
+      width: 16px;
+      height: 16px;
+      color: var(--green-primary);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .plan-btn {
+      width: 100%;
+      padding: 10px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      font-size: 0.86rem;
+      cursor: pointer;
+      text-align: center;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .plan-btn.primary {
+      background: var(--green-primary);
+      color: white;
+    }
+
+    .plan-btn.primary:hover {
+      background: var(--green-hover);
+    }
+
+    .plan-btn.outline {
+      background: transparent;
+      border: 1.5px solid var(--text-dark);
+      color: var(--text-dark);
+    }
+
+    .plan-btn.outline:hover {
+      background: var(--text-dark);
+      color: white;
+    }
+
+    /* Interactive Registration Form Section */
+    .register-container {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      max-width: 680px;
+      margin: 0 auto;
+      border: 1px solid var(--sand-border);
+      box-shadow: var(--shadow-md);
+    }
+
+    .register-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: var(--sand-card);
+      padding: 4px;
+      border-radius: var(--radius-full);
+      margin-bottom: 24px;
+    }
+
+    .reg-tab {
+      padding: 10px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      transition: all 0.2s;
+    }
+
+    .reg-tab.active {
+      background: var(--white);
+      color: var(--text-dark);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .reg-tab.active.persona {
+      color: var(--orange-primary);
+    }
+
+    .reg-tab.active.empresa {
+      color: var(--green-primary);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .form-group-full {
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-label-styled {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .form-input-styled {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--sand-border);
+      background: var(--sand-card);
+      font-size: 0.85rem;
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input-styled:focus {
+      border-color: var(--orange-primary);
+      background: var(--white);
+    }
+
+    .form-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin: 8px 0;
+    }
+
+    /* Modal for AR & Testing */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: #171513;
+      color: white;
+      max-width: 440px;
+      width: 100%;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      text-align: center;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    /* Footer */
+    .footer {
+      background: #231F1C;
+      color: var(--sand-card);
+      padding: 50px 0 24px;
+      margin-top: 60px;
+      border-top: 4px solid var(--orange-primary);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .footer-col h5 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .footer-col p {
+      font-size: 0.82rem;
+      color: #A89F95;
+      line-height: 1.6;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.76rem;
+      color: #8C847B;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 900px) {
+      .hero-section {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .hero-content {
+        align-items: center;
+      }
+      .hero-desc {
+        margin: 0 auto;
+      }
+      .hero-stats {
+        justify-content: center;
+      }
+      .map-container-box {
+        grid-template-columns: 1fr;
+      }
+      .ar-showcase-grid,
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-links {
+        display: none;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Notice Bar -->
+  <div class="top-notice">
+    <span>📍 Riohacha y La Guajira • Proyecto respaldado por la Universidad de La Guajira (CEIDE)</span>
+    <a onclick="scrollToSection('planes-negocios')">Ver planes para comercios locales →</a>
+  </div>
+
+  <!-- Main Navigation -->
+  <header class="navbar">
+    <a href="#" class="brand-logo">
+      <div class="logo-icon-box">K</div>
+      <div class="logo-text">
+        <span class="logo-title">Kashi</span>
+        <span class="logo-slogan" id="brand-slogan">Descubre la magia</span>
+      </div>
+    </a>
+
+    <nav class="nav-links">
+      <a href="#inicio" class="nav-link" id="nav-home">Inicio</a>
+      <a href="#mapa-section" class="nav-link" id="nav-map">Mapa Interactivo</a>
+      <a href="#ar-section" class="nav-link" id="nav-ar">Realidad Aumentada</a>
+      <a href="#planes-negocios" class="nav-link" id="nav-plans">Para Empresas</a>
+      <a href="#registro-section" class="nav-link" id="nav-reg">Registrarse</a>
+    </nav>
+
+    <div class="nav-actions">
+      <!-- Language Selector -->
+      <div class="lang-switcher">
+        <button class="lang-btn active" onclick="switchLanguage('es')">ES</button>
+        <button class="lang-btn" onclick="switchLanguage('en')">EN</button>
+        <button class="lang-btn" onclick="switchLanguage('way')">WAY</button>
+      </div>
+      <a href="#registro-section" class="btn-cta" id="btn-header-cta">Explorar Kashi</a>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <main class="container" id="inicio">
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span>✨</span>
+          <span id="hero-badge-text">Turismo, Cultura y Realidad Aumentada</span>
+        </div>
+        <h1 class="hero-title" id="hero-title">
+          Toda la riqueza cultural de <span class="highlight-orange">Riohacha</span> y <span class="highlight-green">La Guajira</span> en tus manos
+        </h1>
+        <p class="hero-desc" id="hero-desc">
+          Kashi es la plataforma interactiva que centraliza la oferta turística, patrimonial y gastronómica. Revive la tradición oral Wayuu con Realidad Aumentada y conecta con los auténticos emprendimientos locales.
+        </p>
+
+        <div class="hero-btns">
+          <a href="#mapa-section" class="btn-cta">
+            <span>🗺️</span> <span id="btn-hero-map">Abrir Mapa de Riohacha</span>
+          </a>
+          <a href="#planes-negocios" class="btn-secondary">
+            <span>🏢</span> <span id="btn-hero-biz">Afiliar mi Negocio</span>
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <h4>70+</h4>
+            <p id="stat-biz-lbl">Negocios Vinculados</p>
+          </div>
+          <div class="stat-item">
+            <h4>100%</h4>
+            <p id="stat-free-lbl">Gratis para Turistas</p>
+          </div>
+          <div class="stat-item">
+            <h4>3</h4>
+            <p id="stat-lang-lbl">Idiomas (con Wayuunaiki)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Smartphone Mockup Preview -->
+      <div class="hero-preview">
+        <div class="phone-mockup-card">
+          <div class="phone-notch"></div>
+          <div class="phone-header">
+            <span style="font-size:0.75rem;font-weight:800;color:var(--green-primary);">Kashi Móvil</span>
+            <span style="font-size:0.7rem;color:var(--text-muted);">Riohacha en Vivo</span>
+          </div>
+          <div class="phone-body">
+            <div class="phone-map-snap">
+              <div class="map-tag">Calle Primera • El Malecón</div>
+              <div class="pin-pulse">📍</div>
+            </div>
+            <div class="phone-ar-banner">
+              <strong style="color:#FFA375;">📷 Experiencia RA Lista:</strong>
+              <p style="font-size:0.7rem;margin-top:2px;color:#E0D7CD;">Monumento al Palabrero (Pütchipü'ü) detectado a 50m.</p>
+            </div>
+            <button class="btn-cta" style="width:100%;justify-content:center;font-size:0.78rem;padding:8px;" onclick="openARModal('Palabrero')">
+              <span>📷</span> Ver en Realidad Aumentada
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- INTERACTIVE MAP MODULE -->
+  <section class="section-wrapper" id="mapa-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-pretitle" id="map-pretitle">Exploración Geolocalizada</span>
+        <h2 class="section-maintitle" id="map-maintitle">Mapa Interactivo de Sitios y Comercios</h2>
+        <p class="section-subtitle" id="map-subtitle">Encuentra monumentos históricos, artesanas auténticas, restaurantes típicos y hoteles en el corazón de Riohacha.</p>
+      </div>
+
+      <div class="map-container-box">
+        <!-- Sidebar Controls -->
+        <div class="map-sidebar">
+          <div style="font-size:0.85rem;font-weight:800;color:var(--text-dark);" id="filter-title">Filtrar por Categoría:</div>
+          <div class="filter-chips">
+            <button class="filter-chip active" onclick="filterMap('all', this)">Todos (7)</button>
+            <button class="filter-chip" onclick="filterMap('monumento', this)">🏛️ Monumentos</button>
+            <button class="filter-chip" onclick="filterMap('gastronomia', this)">🍲 Gastronomía</button>
+            <button class="filter-chip" onclick="filterMap('artesania', this)">🧶 Artesanías</button>
+          </div>
+
+          <div style="font-size:0.85rem;font-weight:800;color:var(--text-dark);margin-top:6px;" id="places-list-title">Puntos Destacados:</div>
+          <div class="place-list" id="sidebar-place-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Leaflet Map Element -->
+        <div id="riohacha-map"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AR / CULTURAL HERITAGE MODULE -->
+  <section class="section-wrapper" id="ar-section" style="background:var(--sand-card);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-pretitle">Tecnología Inmersiva</span>
+        <h2 class="section-maintitle">Patrimonio Vivo con Realidad Aumentada</h2>
+        <p class="section-subtitle">Apunta tu cámara hacia los monumentos de Riohacha para escuchar las voces de los portadores de tradición y descubrir su significado ancestral.</p>
+      </div>
+
+      <div class="ar-showcase-grid">
+        <!-- Item 1 -->
+        <div class="ar-item-card">
+          <div class="ar-thumb">
+            <span>🗿</span>
+            <span class="ar-thumb-badge">RA Disponible</span>
+          </div>
+          <h3 class="ar-item-title">Monumento al Pütchipü'ü</h3>
+          <p class="ar-item-desc">"El bastón es el micrófono del Palabrero." Descubre el Sistema Normativo Wayuu declarado Patrimonio Inmaterial de la Humanidad por la UNESCO.</p>
+          <button class="btn-cta" style="margin-top:auto;padding:8px 14px;font-size:0.78rem;" onclick="openARModal('Palabrero')">
+            <span>📷</span> Probar Experiencia RA
+          </button>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="ar-item-card">
+          <div class="ar-thumb">
+            <span>🎭</span>
+            <span class="ar-thumb-badge">RA Disponible</span>
+          </div>
+          <h3 class="ar-item-title">Monumento a Los Embarradores</h3>
+          <p class="ar-item-desc">Revive la tradición centenaria del Carnaval de Riohacha: el baño en el lodo de la laguna salina y su danza colectiva.</p>
+          <button class="btn-cta" style="margin-top:auto;padding:8px 14px;font-size:0.78rem;" onclick="openARModal('Embarradores')">
+            <span>📷</span> Probar Experiencia RA
+          </button>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="ar-item-card">
+          <div class="ar-thumb">
+            <span>🌊</span>
+            <span class="ar-thumb-badge" style="background:var(--green-primary);">Audioguía 3D</span>
+          </div>
+          <h3 class="ar-item-title">Muelle Turístico de Riohacha</h3>
+          <p class="ar-item-desc">El punto de encuentro entre la brisa marina y el malecón. Conoce la historia comercial marítima de La Guajira desde principios del siglo XX.</p>
+          <button class="btn-secondary" style="margin-top:auto;padding:8px 14px;font-size:0.78rem;" onclick="openARModal('Muelle')">
+            <span>🎧</span> Escuchar Historia
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUSINESS TIERS / MONETIZATION SECTION -->
+  <section class="section-wrapper" id="planes-negocios">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-pretitle">Para Prestadores y Comercios</span>
+        <h2 class="section-maintitle">Planes de Suscripción para Negocios</h2>
+        <p class="section-subtitle">Aumenta tu visibilidad, atrae turistas nacionales e internacionales y formaliza tu presencia digital en el ecosistema Kashi.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Básico -->
+        <div class="pricing-card">
+          <div class="plan-header">
+            <h3 class="plan-tier-name">Plan Básico</h3>
+            <div class="plan-price">$49.900 <span>/ mes</span></div>
+            <p class="plan-target">Para artesanos y emprendimientos nacientes.</p>
+          </div>
+          <ul class="plan-feature-list">
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Aparición y pin en el mapa interactivo de Riohacha</span>
+            </li>
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Perfil empresarial editable con datos y horarios</span>
+            </li>
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Enlace directo a WhatsApp de atención</span>
+            </li>
+          </ul>
+          <button class="plan-btn outline" onclick="selectPlanAndRegister('Básico ($49.900/m)')">Elegir Plan Básico</button>
+        </div>
+
+        <!-- Intermedio -->
+        <div class="pricing-card featured">
+          <div class="plan-badge-ribbon">MÁS POPULAR</div>
+          <div class="plan-header">
+            <h3 class="plan-tier-name">Plan Intermedio</h3>
+            <div class="plan-price">$99.900 <span>/ mes</span></div>
+            <p class="plan-target">Para restaurantes y talleres en crecimiento.</p>
+          </div>
+          <ul class="plan-feature-list">
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span><strong>Todo lo del Plan Básico</strong></span>
+            </li>
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Mayor visibilidad y prioridad en búsquedas</span>
+            </li>
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Galería multimedia y catálogo de productos / platos</span>
+            </li>
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Módulo de promociones con badge en el mapa</span>
+            </li>
+          </ul>
+          <button class="plan-btn primary" onclick="selectPlanAndRegister('Intermedio ($99.900/m)')">Elegir Plan Intermedio</button>
+        </div>
+
+        <!-- Premium -->
+        <div class="pricing-card">
+          <div class="plan-header">
+            <h3 class="plan-tier-name">Plan Premium</h3>
+            <div class="plan-price">$199.900 <span>/ mes</span></div>
+            <p class="plan-target">Para agencias, hoteles y empresas consolidadas.</p>
+          </div>
+          <ul class="plan-feature-list">
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span><strong>Todo lo del Plan Intermedio</strong></span>
+            </li>
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Publicidad destacada y banner en el feed de Kashi</span>
+            </li>
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span><strong>Sistema de gestión de reservas directas</strong></span>
+            </li>
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Integración de modelo 3D / Realidad Aumentada</span>
+            </li>
+            <li class="plan-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Reporte mensual de métricas y conversiones</span>
+            </li>
+          </ul>
+          <button class="plan-btn outline" onclick="selectPlanAndRegister('Premium ($199.900/m)')">Elegir Plan Premium</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGISTRATION SECTION -->
+  <section class="section-wrapper" id="registro-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-pretitle">Comienza Hoy</span>
+        <h2 class="section-maintitle">Únete a Kashi</h2>
+        <p class="section-subtitle">Regístrate como viajero para guardar tus rutas o vincula tu empresa turística para comenzar a recibir visitantes.</p>
+      </div>
+
+      <div class="register-container">
+        <!-- Dual Tabs -->
+        <div class="register-tabs">
+          <button class="reg-tab active persona" id="tab-btn-user" onclick="switchRegType('persona')">👤 Soy Turista / Persona</button>
+          <button class="reg-tab empresa" id="tab-btn-biz" onclick="switchRegType('empresa')">🏢 Soy Empresa / Comercio</button>
+        </div>
+
+        <!-- FORM PERSONA -->
+        <form id="form-persona" onsubmit="handleRegistration(event, 'persona')">
+          <div class="form-row">
+            <div>
+              <label class="form-label-styled">Nombre</label>
+              <input type="text" class="form-input-styled" placeholder="Ej. Carlos" required>
+            </div>
+            <div>
+              <label class="form-label-styled">Apellido</label>
+              <input type="text" class="form-input-styled" placeholder="Ej. Mendoza" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label-styled">Correo electrónico</label>
+              <input type="email" class="form-input-styled" placeholder="carlos@ejemplo.com" required>
+            </div>
+            <div>
+              <label class="form-label-styled">Teléfono WhatsApp</label>
+              <input type="tel" class="form-input-styled" placeholder="300 123 4567" required>
+            </div>
+          </div>
+          <div class="form-group-full">
+            <label class="form-label-styled">Contraseña</label>
+            <input type="password" class="form-input-styled" placeholder="••••••••" required>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" required id="chk-term-user">
+            <label for="chk-term-user">Acepto los Términos y Condiciones y la Política de Tratamiento de Datos Personales (Ley 1581 de 2012).</label>
+          </div>
+          <button type="submit" class="btn-cta" style="width:100%;justify-content:center;margin-top:14px;padding:12px;">Crear Cuenta Personal</button>
+        </form>
+
+        <!-- FORM EMPRESA -->
+        <form id="form-empresa" style="display:none;" onsubmit="handleRegistration(event, 'empresa')">
+          <div style="background:var(--green-light);padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:0.78rem;color:var(--green-dark);font-weight:600;">
+            Plan seleccionado: <span id="form-selected-plan-badge" style="font-weight:800;">Intermedio ($99.900/m)</span>
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label-styled">Nombre Comercial del Negocio</label>
+              <input type="text" class="form-input-styled" placeholder="Ej. Restaurante Sabor Guajiro" required>
+            </div>
+            <div>
+              <label class="form-label-styled">Categoría</label>
+              <select class="form-input-styled" required>
+                <option value="gastronomia">Gastronomía Típica</option>
+                <option value="artesanias">Artesanías Wayuu</option>
+                <option value="hospedaje">Hospedaje & Hotel</option>
+                <option value="tours">Operador de Tours</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label-styled">Número de Matrícula Mercantil (Cámara de Comercio)</label>
+              <input type="text" class="form-input-styled" placeholder="Ej. 194820-CCG" required>
+            </div>
+            <div>
+              <label class="form-label-styled">NIT / Cédula</label>
+              <input type="text" class="form-input-styled" placeholder="Ej. 901.234.567-8" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label-styled">Nombre del Representante</label>
+              <input type="text" class="form-input-styled" placeholder="Nombre completo" required>
+            </div>
+            <div>
+              <label class="form-label-styled">Teléfono de Contacto</label>
+              <input type="tel" class="form-input-styled" placeholder="324 306 8629" required>
+            </div>
+          </div>
+          <div class="form-group-full">
+            <label class="form-label-styled">Correo electrónico corporativo</label>
+            <input type="email" class="form-input-styled" placeholder="contacto@negocio.com" required>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" required id="chk-term-biz">
+            <label for="chk-term-biz">Certifico que la información mercantil es veraz y acepto los Términos del Servicio para Comercios de Kashi.</label>
+          </div>
+          <button type="submit" class="btn-cta" style="background:var(--green-primary);width:100%;justify-content:center;margin-top:14px;padding:12px;">Registrar Empresa en Kashi</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- AR CAMERA MODAL SIMULATOR -->
+  <div class="modal-overlay" id="ar-camera-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeARModal()">✕</button>
+      <div style="font-size:0.75rem;color:var(--orange-primary);font-weight:800;letter-spacing:1px;margin-bottom:4px;">VISOR REALIDAD AUMENTADA KASHI</div>
+      <h3 id="modal-monument-name" style="font-size:1.25rem;font-weight:800;margin-bottom:12px;">Monumento al Pütchipü'ü</h3>
+
+      <div style="width:100%;height:250px;background:#28231F;border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center;border:2px solid #3F3731;overflow:hidden;">
+        <span style="font-size:5rem;" id="modal-monument-emoji">🗿</span>
+        <div style="position:absolute;bottom:10px;left:10px;right:10px;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);padding:10px;border-radius:12px;font-size:0.75rem;text-align:left;">
+          <strong style="color:#FFA375;">✓ Marcador Reconocido:</strong>
+          <p id="modal-monument-fact" style="margin-top:2px;color:#ECE6DE;">"El bastón no es un apoyo, es el micrófono y autoridad del palabrero wayuu."</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:14px;justify-content:center;">
+        <button class="btn-secondary" onclick="alert('Reproduciendo narración oral en Wayuunaiki...')">
+          <span>🔊</span> Narración Wayuunaiki
+        </button>
+        <button class="btn-cta" onclick="alert('¡Fotografía de recuerdo guardada en tu galería!')">
+          <span>📸</span> Capturar Foto
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom:12px;">
+            <div class="logo-icon-box">K</div>
+            <div class="logo-text">
+              <span class="logo-title" style="color:white;">Kashi</span>
+              <span class="logo-slogan">Descubre la magia</span>
+            </div>
+          </div>
+          <p>
+            Plataforma digital para el fortalecimiento empresarial, turístico y patrimonial de La Guajira. Integrando tecnología, realidad aumentada e identidad cultural.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h5>Navegación</h5>
+          <p><a href="#mapa-section" style="color:#A89F95;text-decoration:none;">Mapa de Riohacha</a></p>
+          <p><a href="#ar-section" style="color:#A89F95;text-decoration:none;">Realidad Aumentada</a></p>
+          <p><a href="#planes-negocios" style="color:#A89F95;text-decoration:none;">Planes Comerciales</a></p>
+          <p><a href="#registro-section" style="color:#A89F95;text-decoration:none;">Registro de Empresas</a></p>
+        </div>
+
+        <div class="footer-col">
+          <h5>Contacto Institucional</h5>
+          <p>📍 Riohacha, La Guajira, Colombia</p>
+          <p>✉️ contacto@kashiapp.com</p>
+          <p>📱 @KASHI_APP</p>
+          <p>🎓 Proyecto de Grado - Negocios Internacionales (Universidad de La Guajira / CEIDE)</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 Kashi S.A.S. Todos los derechos reservados. Cumplimiento Ley 1581 de 2012 (Protección de Datos Personales) y Ley 1258 de 2008.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Places Database in Riohacha
+    const places = [
+      {
+        id: 1,
+        name: "Monumento al Pütchipü'ü (Palabrero)",
+        category: "monumento",
+        lat: 11.5471,
+        lng: -72.9068,
+        desc: "Homenaje al mediador de la palabra Wayuu en el Malecón.",
+        tag: "Patrimonio UNESCO",
+        ar: true
+      },
+      {
+        id: 2,
+        name: "Monumento a Los Embarradores",
+        category: "monumento",
+        lat: 11.5480,
+        lng: -72.9095,
+        desc: "Símbolo vivo de la tradición del Carnaval de Riohacha.",
+        tag: "Carnaval",
+        ar: true
+      },
+      {
+        id: 3,
+        name: "Muelle Turístico de Riohacha",
+        category: "monumento",
+        lat: 11.5492,
+        lng: -72.9077,
+        desc: "Paseo marítimo sobre el Mar Caribe y atardeceres icónicos.",
+        tag: "Mar Caribe",
+        ar: true
+      },
+      {
+        id: 4,
+        name: "Catedral Nuestra Señora de los Remedios",
+        category: "monumento",
+        lat: 11.5452,
+        lng: -72.9088,
+        desc: "Patrimonio arquitectónico e histórico en la Plaza Padilla.",
+        tag: "Historia",
+        ar: false
+      },
+      {
+        id: 5,
+        name: "Restaurante Sabor Guajiro",
+        category: "gastronomia",
+        lat: 11.5460,
+        lng: -72.9055,
+        desc: "Auténtico Friche de chivo, chichigua y salpicón de mariscos.",
+        tag: "Plan Intermedio",
+        ar: false
+      },
+      {
+        id: 6,
+        name: "Taller Artesanal Walekeru",
+        category: "artesania",
+        lat: 11.5448,
+        lng: -72.9062,
+        desc: "Mochilas y chinchorros Wayuu tejidos por maestras artesanas.",
+        tag: "Plan Básico",
+        ar: false
+      },
+      {
+        id: 7,
+        name: "Experiencias Tours Guajira Mágica",
+        category: "gastronomia",
+        lat: 11.5468,
+        lng: -72.9080,
+        desc: "Recorridos históricos y catas de café y gastronomía local.",
+        tag: "Plan Premium",
+        ar: true
+      }
+    ];
+
+    let map;
+    let markers = [];
+
+    // Initialize Map
+    function initMap() {
+      // Centered on Riohacha Malecón
+      map = L.map('riohacha-map').setView([11.5468, -72.9075], 16);
+
+      // OpenStreetMap Layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors | Kashi App'
+      }).addTo(map);
+
+      renderMarkers('all');
+      renderSidebarPlaces('all');
+    }
+
+    // Render Markers on Map
+    function renderMarkers(categoryFilter) {
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+
+      const filtered = categoryFilter === 'all' 
+        ? places 
+        : places.filter(p => p.category === categoryFilter);
+
+      filtered.forEach(p => {
+        const markerColor = p.category === 'monumento' ? '#E75119' : (p.category === 'gastronomia' ? '#5C8B29' : '#8CA366');
+        
+        // Custom Leaflet Div Icon
+        const customIcon = L.divIcon({
+          className: 'custom-pin',
+          html: `<div style="background:${markerColor};width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;box-shadow:0 3px 8px rgba(0,0,0,0.3);border:2px solid white;">📍</div>`,
+          iconSize: [28, 28],
+          iconAnchor: [14, 28]
+        });
+
+        const popupContent = `
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:4px;max-width:200px;">
+            <span style="font-size:0.65rem;font-weight:800;color:${markerColor};text-transform:uppercase;">${p.tag}</span>
+            <h4 style="font-size:0.85rem;margin:2px 0;color:#2B2520;">${p.name}</h4>
+            <p style="font-size:0.72rem;color:#6B625B;margin-bottom:8px;">${p.desc}</p>
+            ${p.ar ? `<button onclick="openARModal('${p.name.split(' ')[2] || 'Palabrero'}')" style="background:#E75119;color:white;border:none;padding:4px 10px;border-radius:12px;font-size:0.68rem;font-weight:700;cursor:pointer;width:100%;">📷 Abrir en RA</button>` : ''}
+          </div>
+        `;
+
+        const marker = L.marker([p.lat, p.lng], { icon: customIcon }).addTo(map);
+        marker.bindPopup(popupContent);
+        markers.push(marker);
+      });
+    }
+
+    // Render Sidebar list
+    function renderSidebarPlaces(categoryFilter) {
+      const listContainer = document.getElementById('sidebar-place-list');
+      listContainer.innerHTML = '';
+
+      const filtered = categoryFilter === 'all' 
+        ? places 
+        : places.filter(p => p.category === categoryFilter);
+
+      filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'place-card';
+        card.onclick = () => {
+          map.flyTo([p.lat, p.lng], 17);
+        };
+        card.innerHTML = `
+          <div class="place-card-top">
+            <span class="place-name">${p.name}</span>
+            <span class="place-tag">${p.tag}</span>
+          </div>
+          <p class="place-desc">${p.desc}</p>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    function filterMap(cat, btn) {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      renderMarkers(cat);
+      renderSidebarPlaces(cat);
+    }
+
+    // AR Simulator Modal
+    function openARModal(item) {
+      const modal = document.getElementById('ar-camera-modal');
+      const title = document.getElementById('modal-monument-name');
+      const fact = document.getElementById('modal-monument-fact');
+      const emoji = document.getElementById('modal-monument-emoji');
+
+      if (item.includes('Palabrero')) {
+        title.innerText = "Monumento al Pütchipü'ü (Palabrero)";
+        fact.innerText = '"El Bastón es el micrófono del Palabrero; al golpear la arena establece el respeto y la mediación pacífica."';
+        emoji.innerText = "🗿";
+      } else if (item.includes('Embarradores')) {
+        title.innerText = "Monumento a Los Embarradores";
+        fact.innerText = '"Homenaje al rito del domingo de Carnaval donde la comunidad se baña en lodo salino para igualar a todos los ciudadanos."';
+        emoji.innerText = "🎭";
+      } else {
+        title.innerText = "Muelle Turístico de Riohacha";
+        fact.innerText = '"Construido a principios del siglo XX como puente comercial marítimo de perlas y maderas finas."';
+        emoji.innerText = "🌊";
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closeARModal() {
+      document.getElementById('ar-camera-modal').style.display = 'none';
+    }
+
+    // Registration Tabs
+    function switchRegType(type) {
+      const formPersona = document.getElementById('form-persona');
+      const formEmpresa = document.getElementById('form-empresa');
+      const tabPersona = document.getElementById('tab-btn-user');
+      const tabEmpresa = document.getElementById('tab-btn-biz');
+
+      if (type === 'persona') {
+        formPersona.style.display = 'block';
+        formEmpresa.style.display = 'none';
+        tabPersona.classList.add('active');
+        tabEmpresa.classList.remove('active');
+      } else {
+        formPersona.style.display = 'none';
+        formEmpresa.style.display = 'block';
+        tabPersona.classList.remove('active');
+        tabEmpresa.classList.add('active');
+      }
+    }
+
+    function selectPlanAndRegister(planName) {
+      switchRegType('empresa');
+      document.getElementById('form-selected-plan-badge').innerText = planName;
+      scrollToSection('registro-section');
+    }
+
+    function handleRegistration(e, type) {
+      e.preventDefault();
+      if (type === 'persona') {
+        alert('¡Bienvenido a Kashi! Tu cuenta de explorador cultural ha sido creada.');
+      } else {
+        alert('¡Solicitud de registro empresarial recibida! Validaremos tu Matrícula Mercantil con la Cámara de Comercio de La Guajira para activar tu plan.');
+      }
+    }
+
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Trilingual switch
+    function switchLanguage(lang) {
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (lang === 'way') {
+        document.getElementById('brand-slogan').innerText = "Wayuu Akuwa'ipa";
+        document.getElementById('hero-badge-text').innerText = "Anasü Wayuu • Realidad Aumentada";
+        document.getElementById('hero-title').innerHTML = "Tü shikiirakat <span class='highlight-orange'>Wajiira</span> je <span class='highlight-green'>Süchikua</span> yaa";
+        document.getElementById('hero-desc').innerText = "Kashi shia wanee aplicación eere paashajeerüin süchiki tü wajiirakat, pütchipüirua je ayatawaa süpüla alijunairua.";
+        document.getElementById('btn-hero-map').innerText = "Ee'iyataa Mapa";
+        document.getElementById('btn-hero-biz').innerText = "Ayatawaa Empresa";
+        alert('Anaa aa’in! Idioma Wayuunaiki activado.');
+      } else if (lang === 'en') {
+        document.getElementById('brand-slogan').innerText = "Discover the magic";
+        document.getElementById('hero-badge-text').innerText = "Tourism, Culture & Augmented Reality";
+        document.getElementById('hero-title').innerHTML = "All the cultural heritage of <span class='highlight-orange'>Riohacha</span> in your hands";
+        document.getElementById('hero-desc').innerText = "Kashi is the interactive platform centralizing local tourism, Wayuu traditions and authentic businesses in La Guajira.";
+        document.getElementById('btn-hero-map').innerText = "Explore Map";
+        document.getElementById('btn-hero-biz').innerText = "Join as Merchant";
+      } else {
+        document.getElementById('brand-slogan').innerText = "Descubre la magia";
+        document.getElementById('hero-badge-text').innerText = "Turismo, Cultura y Realidad Aumentada";
+        document.getElementById('hero-title').innerHTML = "Toda la riqueza cultural de <span class='highlight-orange'>Riohacha</span> y <span class='highlight-green'>La Guajira</span> en tus manos";
+        document.getElementById('hero-desc').innerText = "Kashi es la plataforma interactiva que centraliza la oferta turística, patrimonial y gastronómica. Revive la tradición oral Wayuu con Realidad Aumentada y conecta con los auténticos emprendimientos locales.";
+        document.getElementById('btn-hero-map').innerText = "Abrir Mapa de Riohacha";
+        document.getElementById('btn-hero-biz').innerText = "Afiliar mi Negocio";
+      }
+    }
+
+    // Init on DOM load
+    window.addEventListener('DOMContentLoaded', initMap);
+  </script>
+</body>
+</html>

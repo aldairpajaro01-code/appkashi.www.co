@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kashi App - Perfiles de Usuario y Empresa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --orange-primary: #E75119;
+      --orange-light: #FFEDE6;
+      --orange-hover: #D0420E;
+      --green-primary: #5C8B29;
+      --green-light: #EDF6E5;
+      --green-dark: #43661D;
+      --sage-green: #8CA366;
+      --sand-bg: #FAF6F0;
+      --sand-card: #F4EFEA;
+      --sand-border: #E8DFD5;
+      --text-dark: #2B2520;
+      --text-muted: #6B625B;
+      --text-light: #9C948D;
+      --white: #FFFFFF;
+      --shadow-sm: 0 2px 8px rgba(43, 37, 32, 0.06);
+      --shadow-md: 0 6px 18px rgba(43, 37, 32, 0.09);
+      --shadow-lg: 0 12px 30px rgba(43, 37, 32, 0.12);
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #EFE8DF;
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+    }
+
+    /* Top Control Bar */
+    .control-panel {
+      width: 100%;
+      max-width: 440px;
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--sand-border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .control-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-mini {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--green-primary);
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--orange-primary) 35%, var(--green-primary) 35%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(231, 81, 25, 0.25);
+    }
+
+    .lang-badge {
+      display: flex;
+      gap: 4px;
+      background: var(--sand-card);
+      padding: 4px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .lang-opt {
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .lang-opt.active {
+      background: var(--orange-primary);
+      color: var(--white);
+    }
+
+    /* Role Switcher Pill */
+    .role-switcher {
+      display: flex;
+      background: var(--sand-card);
+      padding: 4px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--sand-border);
+    }
+
+    .role-btn {
+      flex: 1;
+      padding: 9px 12px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .role-btn.active {
+      background: var(--white);
+      color: var(--orange-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .role-btn.business.active {
+      color: var(--green-primary);
+    }
+
+    /* Plan Switcher Bar for Business */
+    .plan-selector-bar {
+      display: none;
+      background: var(--green-light);
+      border: 1px solid #D5E8C5;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      flex-direction: column;
+      gap: 6px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .plan-selector-title {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .plan-pills {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .plan-pill {
+      border: 1px solid #C0DC9E;
+      background: var(--white);
+      padding: 6px 4px;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .plan-pill .p-name {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      display: block;
+    }
+
+    .plan-pill .p-price {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .plan-pill.active {
+      background: var(--green-primary);
+      border-color: var(--green-primary);
+    }
+
+    .plan-pill.active .p-name,
+    .plan-pill.active .p-price {
+      color: var(--white);
+    }
+
+    /* Mobile Device Frame */
+    .device-shell {
+      width: 100%;
+      max-width: 440px;
+      min-height: 844px;
+      background: var(--sand-bg);
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow: 0 18px 45px rgba(43, 37, 32, 0.18);
+      border: 6px solid #1C1917;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 38px;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      z-index: 20;
+    }
+
+    .status-notch {
+      width: 120px;
+      height: 18px;
+      background: #1C1917;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Header Nav */
+    .app-header {
+      background: var(--sand-bg);
+      padding: 8px 18px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-full);
+      background: var(--white);
+      border: 1px solid var(--sand-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-dark);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .screen-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 18px 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Profile Header Card */
+    .profile-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--sand-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: linear-gradient(135deg, var(--orange-primary), #FA7E3B);
+      opacity: 0.92;
+    }
+
+    .business-mode .profile-card::before {
+      background: linear-gradient(135deg, var(--green-primary), var(--sage-green));
+    }
+
+    .profile-card-body {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 82px;
+      height: 82px;
+      border-radius: var(--radius-full);
+      border: 4px solid var(--white);
+      box-shadow: var(--shadow-md);
+      background: #E5D9CC;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: var(--green-primary);
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      border: 2px solid white;
+    }
+
+    .profile-name {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .verified-icon {
+      color: #1DA1F2;
+      font-size: 1rem;
+    }
+
+    .profile-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .badge-chip {
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-chip.orange {
+      background: var(--orange-light);
+      color: var(--orange-primary);
+    }
+
+    .badge-chip.green {
+      background: var(--green-light);
+      color: var(--green-primary);
+    }
+
+    .badge-chip.dark {
+      background: #EFE7DE;
+      color: var(--text-dark);
+    }
+
+    .profile-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      width: 100%;
+      padding-top: 14px;
+      border-top: 1px solid var(--sand-border);
+      margin-top: 4px;
+    }
+
+    .stat-box {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Navigation Tabs Inside Screen */
+    .sub-tabs {
+      display: flex;
+      background: var(--sand-card);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      border: 1px solid var(--sand-border);
+      gap: 4px;
+    }
+
+    .sub-tab {
+      flex: 1;
+      padding: 8px 4px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .sub-tab.active {
+      background: var(--white);
+      color: var(--text-dark);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Content Cards */
+    .section-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--sand-border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-title-link {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--orange-primary);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .business-mode .section-title-link {
+      color: var(--green-primary);
+    }
+
+    /* Items List */
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      background: var(--sand-card);
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .item-row:hover {
+      border-color: var(--sand-border);
+    }
+
+    .item-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+    }
+
+    .item-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .item-action-btn {
+      padding: 6px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      border: none;
+      background: var(--white);
+      color: var(--text-dark);
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--sand-border);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* AR Showcase Card */
+    .ar-interactive-card {
+      background: linear-gradient(145deg, #2B2520, #1A1715);
+      color: white;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ar-badge {
+      background: var(--orange-primary);
+      color: white;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .ar-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .ar-desc {
+      font-size: 0.75rem;
+      color: #D3CDC6;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .ar-btn {
+      background: var(--white);
+      color: var(--text-dark);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-weight: 800;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .ar-btn:hover {
+      background: var(--orange-light);
+      color: var(--orange-primary);
+    }
+
+    /* Feature Locked Overlay */
+    .locked-feature-card {
+      background: #F8F5F1;
+      border: 2px dashed #D5CDC4;
+      border-radius: var(--radius-md);
+      padding: 20px 16px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lock-icon-circle {
+      width: 46px;
+      height: 46px;
+      border-radius: var(--radius-full);
+      background: #EBE4DA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--text-muted);
+    }
+
+    .locked-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .locked-desc {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      max-width: 280px;
+      line-height: 1.35;
+    }
+
+    .upgrade-btn {
+      margin-top: 4px;
+      background: var(--green-primary);
+      color: white;
+      border: none;
+      padding: 7px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 4px 10px rgba(92, 139, 41, 0.25);
+    }
+
+    /* Forms */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--sand-border);
+      background: var(--sand-card);
+      font-size: 0.82rem;
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--orange-primary);
+      background: var(--white);
+    }
+
+    .business-mode .form-input:focus,
+    .business-mode .form-select:focus,
+    .business-mode .form-textarea:focus {
+      border-color: var(--green-primary);
+    }
+
+    /* Bottom Navigation Bar */
+    .app-bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 68px;
+      background: var(--white);
+      border-top: 1px solid var(--sand-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 10px;
+      z-index: 30;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 0.65rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item.active {
+      color: var(--orange-primary);
+    }
+
+    .business-mode .nav-item.active {
+      color: var(--green-primary);
+    }
+
+    .nav-icon {
+      font-size: 1.25rem;
+    }
+
+    /* Modal / Popups for AR and interactive actions */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: var(--white);
+      width: 100%;
+      max-width: 380px;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-lg);
+      animation: popIn 0.25s ease;
+      position: relative;
+    }
+
+    .close-modal-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--sand-card);
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius-full);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Notification toast */
+    .toast {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text-dark);
+      color: white;
+      padding: 10px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-md);
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      top: 60px;
+    }
+
+    /* Grid for Gallery */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .photo-item {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      background: var(--sand-card);
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--sand-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .delete-photo-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      width: 20px;
+      height: 20px;
+      border-radius: var(--radius-full);
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .add-photo-box {
+      border: 2px dashed #C8BFB5;
+      background: transparent;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP PROTOTYPE SWITCHER BAR -->
+  <div class="control-panel">
+    <div class="control-header">
+      <div class="brand-mini">
+        <div class="brand-icon">K</div>
+        <span>Kashi</span>
+      </div>
+      <div class="lang-badge">
+        <span class="lang-opt active" onclick="setLanguage('es')">ES</span>
+        <span class="lang-opt" onclick="setLanguage('en')">EN</span>
+        <span class="lang-opt" onclick="setLanguage('way')">WAY</span>
+      </div>
+    </div>
+
+    <!-- Mode Selector: Usuario vs Empresa -->
+    <div class="role-switcher">
+      <button class="role-btn active" id="btn-user-mode" onclick="switchProfileMode('user')">
+        <span>👤</span> <span id="label-user-tab">Perfil Turista / Usuario</span>
+      </button>
+      <button class="role-btn business" id="btn-business-mode" onclick="switchProfileMode('business')">
+        <span>🏢</span> <span id="label-biz-tab">Perfil Empresa / Comercio</span>
+      </button>
+    </div>
+
+    <!-- Business Plan Selector (Only visible in Business Mode) -->
+    <div class="plan-selector-bar" id="business-plan-bar">
+      <div class="plan-selector-title">
+        <span>⚡ NIVEL DE PLAN ACTIVO:</span>
+        <span id="plan-badge-status" style="color:var(--green-primary);font-size:0.7rem;">Activo</span>
+      </div>
+      <div class="plan-pills">
+        <div class="plan-pill" id="pill-basico" onclick="setBusinessTier('basico')">
+          <span class="p-name">Básico</span>
+          <span class="p-price">$49.900/m</span>
+        </div>
+        <div class="plan-pill active" id="pill-intermedio" onclick="setBusinessTier('intermedio')">
+          <span class="p-name">Intermedio</span>
+          <span class="p-price">$99.900/m</span>
+        </div>
+        <div class="plan-pill" id="pill-premium" onclick="setBusinessTier('premium')">
+          <span class="p-name">Premium</span>
+          <span class="p-price">$199.900/m</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEVICE FRAME -->
+  <div class="device-shell" id="app-device">
+    <div class="status-notch"></div>
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>📶 5G &nbsp; 🔋 98%</span>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="app-toast">
+      <span id="toast-icon">✓</span>
+      <span id="toast-msg">Acción realizada</span>
+    </div>
+
+    <!-- APP HEADER -->
+    <div class="app-header">
+      <div class="header-left">
+        <button class="header-btn" onclick="showToast('Volviendo al mapa interactivo de Riohacha...')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <span class="header-title" id="screen-title">Mi Perfil</span>
+      </div>
+      <button class="header-btn" onclick="openEditModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+      </button>
+    </div>
+
+    <!-- SCREEN CONTENT (DYNAMIC) -->
+    <div class="screen-content" id="screen-container">
+
+      <!-- ================= USER / TOURIST PROFILE ================= -->
+      <div id="view-user-content">
+        <!-- User Profile Card -->
+        <div class="profile-card">
+          <div class="profile-card-body">
+            <div class="avatar-wrapper">
+              <span>🎒</span>
+              <div class="avatar-badge">✓</div>
+            </div>
+            <h2 class="profile-name" id="user-display-name">Aldair Pájaro <span class="verified-icon">★</span></h2>
+            <p class="profile-subtitle" id="user-display-sub">Explorador Cultural • Riohacha, La Guajira</p>
+            <div class="chip-row">
+              <span class="badge-chip orange">🏆 Nivel 3 Wayuu Explorer</span>
+              <span class="badge-chip dark">📍 12 Monumentos visitados</span>
+            </div>
+            <div class="profile-stats-row">
+              <div class="stat-box">
+                <span class="stat-num" id="user-stat-visits">14</span>
+                <span class="stat-label">Lugares</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num" id="user-stat-favs">6</span>
+                <span class="stat-label">Favoritos</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num" id="user-stat-scans">9</span>
+                <span class="stat-label">Escaneos RA</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Sub-tabs -->
+        <div class="sub-tabs">
+          <button class="sub-tab active" onclick="switchUserSubTab('activity')">Actividad</button>
+          <button class="sub-tab" onclick="switchUserSubTab('favorites')">Favoritos</button>
+          <button class="sub-tab" onclick="switchUserSubTab('ar_history')">Historial RA</button>
+          <button class="sub-tab" onclick="switchUserSubTab('bookings')">Mis Reservas</button>
+        </div>
+
+        <!-- User Sub-tab 1: Activity -->
+        <div id="user-tab-activity" class="item-list">
+          <div class="ar-interactive-card">
+            <span class="ar-badge">EXPERIENCIA INMERSIVA RA</span>
+            <div class="ar-title">El Monumento al Pütchipü'ü</div>
+            <div class="ar-desc">"El Bastón es el micrófono del Palabrero. Escanéalo en la Calle Primera para revivir la tradición oral de resolución de conflictos Wayuu."</div>
+            <button class="ar-btn" onclick="openARModal('Palabrero')">
+              <span>📷</span> Abrir Cámara RA
+            </button>
+          </div>
+
+          <div class="section-card">
+            <div class="section-title">
+              <span>Rutas y Monumentos Visitados</span>
+              <span class="section-title-link" onclick="showToast('Ruta completa cargada')">Ver Mapa</span>
+            </div>
+            <div class="item-list">
+              <div class="item-row">
+                <div class="item-icon-box">🏛️</div>
+                <div class="item-details">
+                  <div class="item-title">Monumento a Los Embarradores</div>
+                  <div class="item-desc">Visitado hace 2 días • Tradición de Carnaval</div>
+                </div>
+                <button class="item-action-btn" onclick="openARModal('Embarradores')">RA</button>
+              </div>
+
+              <div class="item-row">
+                <div class="item-icon-box">🌊</div>
+                <div class="item-details">
+                  <div class="item-title">Muelle Turístico de Riohacha</div>
+                  <div class="item-desc">Punto icónico sobre el Mar Caribe</div>
+                </div>
+                <button class="item-action-btn" onclick="showToast('Abriendo audioguía...')">Guía</button>
+              </div>
+
+              <div class="item-row">
+                <div class="item-icon-box">⛪</div>
+                <div class="item-details">
+                  <div class="item-title">Catedral Nuestra Señora de los Remedios</div>
+                  <div class="item-desc">Plaza Padilla • Arquitectura colonial</div>
+                </div>
+                <button class="item-action-btn" onclick="showToast('Ver reseña histórica')">Info</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Sub-tab 2: Favorites -->
+        <div id="user-tab-favorites" class="item-list" style="display:none;">
+          <div class="section-card">
+            <div class="section-title">Negocios y Talleres Guardados</div>
+            <div class="item-list" id="user-favs-list">
+              <div class="item-row">
+                <div class="item-icon-box">🧶</div>
+                <div class="item-details">
+                  <div class="item-title">Taller Artesanal Walekeru</div>
+                  <div class="item-desc">Mochilas & Chinchorros autóctonos</div>
+                </div>
+                <button class="item-action-btn" onclick="showToast('Contactando artesana por WhatsApp...')">Chat</button>
+              </div>
+
+              <div class="item-row">
+                <div class="item-icon-box">🍲</div>
+                <div class="item-details">
+                  <div class="item-title">Restaurante Sabor Guajiro</div>
+                  <div class="item-desc">Friche, Chivo y Salpicón de Cazón</div>
+                </div>
+                <button class="item-action-btn" onclick="showToast('Mostrando menú típico...')">Menú</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Sub-tab 3: AR History -->
+        <div id="user-tab-ar_history" class="item-list" style="display:none;">
+          <div class="section-card">
+            <div class="section-title">Sellos de Realidad Aumentada</div>
+            <div class="item-list">
+              <div class="item-row">
+                <div class="item-icon-box" style="background:#FFE6D9;color:var(--orange-primary);">✓</div>
+                <div class="item-details">
+                  <div class="item-title">Bastón de Autoridad del Pütchipü'ü</div>
+                  <div class="item-desc">Escaneado con éxito • Audio 3D Wayuunaiki</div>
+                </div>
+                <button class="item-action-btn" onclick="openARModal('Palabrero')">Repetir</button>
+              </div>
+              <div class="item-row">
+                <div class="item-icon-box" style="background:#FFE6D9;color:var(--orange-primary);">✓</div>
+                <div class="item-details">
+                  <div class="item-title">Danza de la Yonna (Monumento)</div>
+                  <div class="item-desc">Simulación 3D de pasos del Kaasha</div>
+                </div>
+                <button class="item-action-btn" onclick="openARModal('Kaasha')">Repetir</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Sub-tab 4: Bookings -->
+        <div id="user-tab-bookings" class="item-list" style="display:none;">
+          <div class="section-card">
+            <div class="section-title">Reservas Realizadas en Kashi</div>
+            <div class="item-list">
+              <div class="item-row">
+                <div class="item-icon-box">🛺</div>
+                <div class="item-details">
+                  <div class="item-title">Tour Histórico Centro de Riohacha</div>
+                  <div class="item-desc">15 Septiembre • 4:00 PM • 2 Personas</div>
+                </div>
+                <span class="badge-chip green">Confirmada</span>
+              </div>
+              <div class="item-row">
+                <div class="item-icon-box">🍽️</div>
+                <div class="item-details">
+                  <div class="item-title">Mesa en Restaurante La Brisa</div>
+                  <div class="item-desc">18 Septiembre • 1:00 PM • 3 Personas</div>
+                </div>
+                <span class="badge-chip orange">Pendiente</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- ================= BUSINESS / EMPRESA PROFILE ================= -->
+      <div id="view-business-content" style="display:none;">
+        <!-- Business Profile Card -->
+        <div class="profile-card">
+          <div class="profile-card-body">
+            <div class="avatar-wrapper">
+              <span id="biz-avatar-icon">🍽️</span>
+              <div class="avatar-badge" style="background:var(--orange-primary);">★</div>
+            </div>
+            <h2 class="profile-name" id="biz-name">Restaurante & Experiencias La Guajira</h2>
+            <p class="profile-subtitle" id="biz-sub">Gastronomía & Tours • Calle 1 # 5-20, Riohacha</p>
+            
+            <div class="chip-row">
+              <span class="badge-chip green" id="biz-plan-chip">Plan Intermedio Activo</span>
+              <span class="badge-chip dark" id="biz-mat-chip">Matrícula: 204918-CCG</span>
+            </div>
+
+            <div class="profile-stats-row">
+              <div class="stat-box">
+                <span class="stat-num" id="stat-biz-views">1.240</span>
+                <span class="stat-label">Vistas Mapa</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num" id="stat-biz-clicks">312</span>
+                <span class="stat-label">Contactos</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num" id="stat-biz-res">28</span>
+                <span class="stat-label">Reservas</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Sub-tabs -->
+        <div class="sub-tabs">
+          <button class="sub-tab active" onclick="switchBizSubTab('profile_edit')">Perfil</button>
+          <button class="sub-tab" onclick="switchBizSubTab('catalog')">Catálogo</button>
+          <button class="sub-tab" onclick="switchBizSubTab('promotions')">Promociones</button>
+          <button class="sub-tab" onclick="switchBizSubTab('bookings')">Reservas</button>
+        </div>
+
+        <!-- Business Sub-tab 1: Edit Profile (Available on ALL plans) -->
+        <div id="biz-tab-profile_edit" class="item-list">
+          <div class="section-card">
+            <div class="section-title">
+              <span>Información Comercial del Perfil</span>
+              <span class="badge-chip green">Básico / Intermedio / Premium</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nombre del Emprendimiento</label>
+              <input type="text" class="form-input" id="input-biz-name" value="Restaurante & Experiencias La Guajira">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Descripción para Turistas</label>
+              <textarea class="form-textarea" rows="2" id="input-biz-desc">Platos típicos del mar, friche tradicional y exhibición de artesanías wayuu en vivo.</textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div class="form-group">
+                <label class="form-label">Teléfono WhatsApp</label>
+                <input type="text" class="form-input" id="input-biz-phone" value="+57 324 306 8629">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Horario</label>
+                <input type="text" class="form-input" id="input-biz-hours" value="10:00 AM - 10:00 PM">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Número de Matrícula Mercantil (Cámara de Comercio)</label>
+              <input type="text" class="form-input" id="input-biz-mat" value="204918-CCG" readonly style="background:#EBE4DA;">
+            </div>
+            <button class="upgrade-btn" style="width:100%;justify-content:center;padding:10px;" onclick="saveBusinessProfile()">
+              Guardar Cambios del Perfil
+            </button>
+          </div>
+        </div>
+
+        <!-- Business Sub-tab 2: Catalog / Multimedia (Locked on Basic, Active on Intermedio/Premium) -->
+        <div id="biz-tab-catalog" class="item-list" style="display:none;">
+          <div id="catalog-locked" class="locked-feature-card" style="display:none;">
+            <div class="lock-icon-circle">🔒</div>
+            <div class="locked-title">Catálogo y Galería Bloqueada</div>
+            <div class="locked-desc">El <strong>Plan Básico ($49.900/m)</strong> incluye ficha y presencia en el mapa. La carga multimedia de productos requiere <strong>Plan Intermedio o Premium</strong>.</div>
+            <button class="upgrade-btn" onclick="setBusinessTier('intermedio')">
+              <span>⚡</span> Activar Plan Intermedio ($99.900/m)
+            </button>
+          </div>
+
+          <div id="catalog-unlocked" class="section-card">
+            <div class="section-title">
+              <span>Productos y Galería Multimedia</span>
+              <span class="badge-chip green" id="catalog-tier-badge">Intermedio / Premium</span>
+            </div>
+            <p style="font-size:0.75rem;color:var(--text-muted);">Los turistas podrán ver tus fotos y precios directamente al tocar tu pin en el mapa de Riohacha.</p>
+
+            <div class="photo-grid" id="biz-photo-grid">
+              <div class="photo-item">
+                <span>🍲</span>
+                <button class="delete-photo-btn" onclick="this.parentElement.remove()">✕</button>
+              </div>
+              <div class="photo-item">
+                <span>🦞</span>
+                <button class="delete-photo-btn" onclick="this.parentElement.remove()">✕</button>
+              </div>
+              <div class="photo-item">
+                <span>🧶</span>
+                <button class="delete-photo-btn" onclick="this.parentElement.remove()">✕</button>
+              </div>
+              <div class="photo-item add-photo-box" onclick="addNewProductItem()">
+                <span style="font-size:1.2rem;">+</span>
+                <span>Subir</span>
+              </div>
+            </div>
+
+            <div class="item-list" id="biz-products-list" style="margin-top:8px;">
+              <div class="item-row">
+                <div class="item-icon-box">🍲</div>
+                <div class="item-details">
+                  <div class="item-title">Plato Típico de Friche</div>
+                  <div class="item-desc">Acompañado de bollo limpio y arepa de chichigua • $28.000 COP</div>
+                </div>
+                <button class="item-action-btn" onclick="showToast('Editando producto...')">Editar</button>
+              </div>
+
+              <div class="item-row">
+                <div class="item-icon-box">🧶</div>
+                <div class="item-details">
+                  <div class="item-title">Mochila Wayuu Susu</div>
+                  <div class="item-desc">Tejido a mano una hebra • $120.000 COP</div>
+                </div>
+                <button class="item-action-btn" onclick="showToast('Editando producto...')">Editar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Sub-tab 3: Promotions (Locked on Basic, Active on Intermedio/Premium) -->
+        <div id="biz-tab-promotions" class="item-list" style="display:none;">
+          <div id="promo-locked" class="locked-feature-card" style="display:none;">
+            <div class="lock-icon-circle">🔒</div>
+            <div class="locked-title">Módulo de Ofertas Bloqueado</div>
+            <div class="locked-desc">Para publicar ofertas con insignia destacada en el mapa, actualiza a <strong>Plan Intermedio o Premium</strong>.</div>
+            <button class="upgrade-btn" onclick="setBusinessTier('intermedio')">
+              <span>⚡</span> Mejorar a Plan Intermedio
+            </button>
+          </div>
+
+          <div id="promo-unlocked" class="section-card">
+            <div class="section-title">
+              <span>Crear Oferta Destacada</span>
+              <button class="item-action-btn" style="background:var(--green-primary);color:white;" onclick="publishNewPromo()">+ Publicar</button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Título de la Promoción</label>
+              <input type="text" class="form-input" id="promo-title-input" value="15% de Descuento en Almuerzos para Turistas">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vigencia de la Oferta</label>
+              <input type="text" class="form-input" value="Válido hasta el 30 de Septiembre">
+            </div>
+
+            <div class="item-list" style="margin-top:6px;">
+              <div class="item-row" style="background:#FFF5F0;border-color:#FFD2C0;">
+                <div class="item-icon-box" style="background:var(--orange-primary);color:white;">🏷️</div>
+                <div class="item-details">
+                  <div class="item-title">15% en Gastronomía Típica</div>
+                  <div class="item-desc">Insignia "OFERTA" visible en el mapa de Riohacha</div>
+                </div>
+                <span class="badge-chip orange">Activa</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Sub-tab 4: Bookings & AR (Exclusive to PREMIUM) -->
+        <div id="biz-tab-bookings" class="item-list" style="display:none;">
+          <div id="booking-locked" class="locked-feature-card" style="display:none;">
+            <div class="lock-icon-circle">🔒</div>
+            <div class="locked-title">Reservas Directas & Realidad Aumentada</div>
+            <div class="locked-desc">La gestión de reservas en vivo y la integración de modelos 3D / AR de tu negocio son exclusivas del <strong>Plan Premium ($199.900/m)</strong>.</div>
+            <button class="upgrade-btn" onclick="setBusinessTier('premium')">
+              <span>👑</span> Activar Plan Premium ($199.900/m)
+            </button>
+          </div>
+
+          <div id="booking-unlocked" class="item-list">
+            <!-- Incoming Bookings -->
+            <div class="section-card">
+              <div class="section-title">
+                <span>Solicitudes de Reserva de Turistas</span>
+                <span class="badge-chip orange" id="booking-count-badge">2 Pendientes</span>
+              </div>
+              <div class="item-list" id="biz-bookings-list">
+                <div class="item-row" id="res-1">
+                  <div class="item-icon-box">👤</div>
+                  <div class="item-details">
+                    <div class="item-title">Laura Sánchez (Bogotá)</div>
+                    <div class="item-desc">Mesa para 4 • Hoy 1:30 PM • Menú Degustación</div>
+                  </div>
+                  <div style="display:flex;gap:4px;">
+                    <button class="item-action-btn" style="color:var(--green-primary);" onclick="handleReservation('res-1', 'Aceptada')">✓</button>
+                    <button class="item-action-btn" style="color:#C62828;" onclick="handleReservation('res-1', 'Rechazada')">✕</button>
+                  </div>
+                </div>
+
+                <div class="item-row" id="res-2">
+                  <div class="item-icon-box">👤</div>
+                  <div class="item-details">
+                    <div class="item-title">David Wilson (Canadá)</div>
+                    <div class="item-desc">Taller de tejido 2 pax • Mañana 10:00 AM</div>
+                  </div>
+                  <div style="display:flex;gap:4px;">
+                    <button class="item-action-btn" style="color:var(--green-primary);" onclick="handleReservation('res-2', 'Aceptada')">✓</button>
+                    <button class="item-action-btn" style="color:#C62828;" onclick="handleReservation('res-2', 'Rechazada')">✕</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AR Experience Integration for Business -->
+            <div class="ar-interactive-card" style="background:linear-gradient(145deg, #1E3310, #34521D);">
+              <span class="ar-badge" style="background:var(--green-primary);">MÓDULO AR EMPRESARIAL</span>
+              <div class="ar-title">Experiencia 3D en tu Negocio</div>
+              <div class="ar-desc">Tu negocio cuenta con un modelo 3D activo de la artesanía insigne para que los turistas lo escaneen desde la app Kashi.</div>
+              <button class="ar-btn" onclick="openARModal('Empresa')">
+                <span>👁️</span> Previsualizar AR de mi Negocio
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- BOTTOM NAVBAR -->
+    <div class="app-bottom-nav">
+      <div class="nav-item" onclick="showToast('Abriendo Mapa Interactivo...')">
+        <span class="nav-icon">🗺️</span>
+        <span>Mapa</span>
+      </div>
+      <div class="nav-item" onclick="showToast('Explorando monumentos...')">
+        <span class="nav-icon">🏛️</span>
+        <span>Cultura</span>
+      </div>
+      <div class="nav-item" onclick="openARModal('Palabrero')">
+        <span class="nav-icon" style="color:var(--orange-primary);">📷</span>
+        <span style="color:var(--orange-primary);">Cámara RA</span>
+      </div>
+      <div class="nav-item active">
+        <span class="nav-icon">👤</span>
+        <span id="nav-profile-label">Perfil</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- AR SIMULATOR MODAL -->
+  <div class="modal-overlay" id="ar-modal">
+    <div class="modal-card" style="background:#171513;color:white;text-align:center;">
+      <button class="close-modal-btn" onclick="closeModal('ar-modal')">✕</button>
+      <div style="font-size:0.75rem;color:var(--orange-primary);font-weight:800;letter-spacing:1px;">KASHI REALIDAD AUMENTADA</div>
+      <h3 id="ar-modal-title" style="font-size:1.15rem;font-weight:800;">Monumento al Pütchipü'ü</h3>
+      
+      <div style="position:relative;width:100%;height:230px;background:#2B2724;border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;border:2px solid #453E38;">
+        <!-- Simulated AR Overlay -->
+        <div style="font-size:4.5rem;animation:popIn 0.4s ease;">🗿</div>
+        <div style="position:absolute;bottom:10px;left:10px;right:10px;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);padding:8px 12px;border-radius:10px;font-size:0.75rem;text-align:left;">
+          <strong style="color:#FFA066;">✓ Marcador detectado:</strong>
+          <p id="ar-modal-fact" style="margin-top:2px;color:#ECE6DE;">"El bastón no es un apoyo, es el micrófono y autoridad del palabrero wayuu."</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:6px;">
+        <button class="ar-btn" onclick="showToast('Reproduciendo audio en Wayuunaiki...')">
+          <span>🔊</span> Escuchar en Wayuunaiki
+        </button>
+        <button class="ar-btn" style="background:var(--orange-primary);color:white;" onclick="showToast('Foto guardada en tus recuerdos de Kashi!')">
+          <span>📸</span> Capturar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT PROFILE MODAL -->
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal-card">
+      <button class="close-modal-btn" onclick="closeModal('edit-modal')">✕</button>
+      <h3 class="section-title">Editar Datos de Usuario</h3>
+      <div class="form-group">
+        <label class="form-label">Nombre Completo</label>
+        <input type="text" class="form-input" id="edit-user-name" value="Aldair Pájaro">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ciudad de Residencia</label>
+        <input type="text" class="form-input" id="edit-user-city" value="Riohacha, La Guajira">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Idioma de la App</label>
+        <select class="form-select" id="edit-user-lang">
+          <option value="Español">Español</option>
+          <option value="Wayuunaiki">Wayuunaiki (Alijuna / Wayuu)</option>
+          <option value="English">English</option>
+        </select>
+      </div>
+      <button class="upgrade-btn" style="width:100%;justify-content:center;padding:10px;" onclick="saveUserProfile()">
+        Guardar Perfil
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let currentMode = 'user'; // 'user' or 'business'
+    let currentTier = 'intermedio'; // 'basico', 'intermedio', 'premium'
+
+    // Switch Profile Mode (User vs Business)
+    function switchProfileMode(mode) {
+      currentMode = mode;
+      const appDevice = document.getElementById('app-device');
+      const userBtn = document.getElementById('btn-user-mode');
+      const bizBtn = document.getElementById('btn-business-mode');
+      const bizPlanBar = document.getElementById('business-plan-bar');
+      const userView = document.getElementById('view-user-content');
+      const bizView = document.getElementById('view-business-content');
+      const screenTitle = document.getElementById('screen-title');
+
+      if (mode === 'user') {
+        appDevice.classList.remove('business-mode');
+        userBtn.classList.add('active');
+        bizBtn.classList.remove('active');
+        bizPlanBar.style.display = 'none';
+        userView.style.display = 'block';
+        bizView.style.display = 'none';
+        screenTitle.innerText = 'Mi Perfil de Explorador';
+        showToast('Vista de Turista / Usuario activada');
+      } else {
+        appDevice.classList.add('business-mode');
+        userBtn.classList.remove('active');
+        bizBtn.classList.add('active');
+        bizPlanBar.style.display = 'flex';
+        userView.style.display = 'none';
+        bizView.style.display = 'block';
+        screenTitle.innerText = 'Panel de Control Empresa';
+        applyTierFeatures();
+        showToast('Vista de Empresa / Comercio activada');
+      }
+    }
+
+    // Set Business Tier (Básico, Intermedio, Premium)
+    function setBusinessTier(tier) {
+      currentTier = tier;
+      document.getElementById('pill-basico').classList.toggle('active', tier === 'basico');
+      document.getElementById('pill-intermedio').classList.toggle('active', tier === 'intermedio');
+      document.getElementById('pill-premium').classList.toggle('active', tier === 'premium');
+
+      const chip = document.getElementById('biz-plan-chip');
+      const names = {
+        'basico': 'Plan Básico ($49.900/m)',
+        'intermedio': 'Plan Intermedio ($99.900/m)',
+        'premium': 'Plan Premium ($199.900/m)'
+      };
+      chip.innerText = names[tier];
+      chip.className = 'badge-chip ' + (tier === 'basico' ? 'dark' : (tier === 'intermedio' ? 'green' : 'orange'));
+
+      applyTierFeatures();
+      showToast('Nivel actualizado a ' + names[tier]);
+    }
+
+    // Apply Tier Feature Locks / Unlocks
+    function applyTierFeatures() {
+      const catalogLocked = document.getElementById('catalog-locked');
+      const catalogUnlocked = document.getElementById('catalog-unlocked');
+      const promoLocked = document.getElementById('promo-locked');
+      const promoUnlocked = document.getElementById('promo-unlocked');
+      const bookingLocked = document.getElementById('booking-locked');
+      const bookingUnlocked = document.getElementById('booking-unlocked');
+
+      if (currentTier === 'basico') {
+        catalogLocked.style.display = 'flex';
+        catalogUnlocked.style.display = 'none';
+        promoLocked.style.display = 'flex';
+        promoUnlocked.style.display = 'none';
+        bookingLocked.style.display = 'flex';
+        bookingUnlocked.style.display = 'none';
+      } else if (currentTier === 'intermedio') {
+        catalogLocked.style.display = 'none';
+        catalogUnlocked.style.display = 'flex';
+        promoLocked.style.display = 'none';
+        promoUnlocked.style.display = 'flex';
+        bookingLocked.style.display = 'flex';
+        bookingUnlocked.style.display = 'none';
+      } else if (currentTier === 'premium') {
+        catalogLocked.style.display = 'none';
+        catalogUnlocked.style.display = 'flex';
+        promoLocked.style.display = 'none';
+        promoUnlocked.style.display = 'flex';
+        bookingLocked.style.display = 'none';
+        bookingUnlocked.style.display = 'flex';
+      }
+    }
+
+    // Sub-tab Navigation for User
+    function switchUserSubTab(tabName) {
+      const tabs = ['activity', 'favorites', 'ar_history', 'bookings'];
+      tabs.forEach(t => {
+        const el = document.getElementById('user-tab-' + t);
+        if (el) el.style.display = (t === tabName) ? 'flex' : 'none';
+      });
+      const btns = document.querySelectorAll('#view-user-content .sub-tab');
+      btns.forEach((b, i) => {
+        b.classList.toggle('active', tabs[i] === tabName);
+      });
+    }
+
+    // Sub-tab Navigation for Business
+    function switchBizSubTab(tabName) {
+      const tabs = ['profile_edit', 'catalog', 'promotions', 'bookings'];
+      tabs.forEach(t => {
+        const el = document.getElementById('biz-tab-' + t);
+        if (el) el.style.display = (t === tabName) ? 'flex' : 'none';
+      });
+      const btns = document.querySelectorAll('#view-business-content .sub-tab');
+      btns.forEach((b, i) => {
+        b.classList.toggle('active', tabs[i] === tabName);
+      });
+    }
+
+    // Toast Function
+    function showToast(msg) {
+      const toast = document.getElementById('app-toast');
+      document.getElementById('toast-msg').innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2600);
+    }
+
+    // Modals
+    function openARModal(monument) {
+      const modal = document.getElementById('ar-modal');
+      const title = document.getElementById('ar-modal-title');
+      const fact = document.getElementById('ar-modal-fact');
+
+      if (monument === 'Palabrero') {
+        title.innerText = "Monumento al Pütchipü'ü";
+        fact.innerText = '"El Bastón es el micrófono del Palabrero; al tocar la tierra pide la palabra en el sistema normativo wayuu."';
+      } else if (monument === 'Embarradores') {
+        title.innerText = "Monumento a Los Embarradores";
+        fact.innerText = '"Homenaje a la tradición carnestoléndica de bañarse en el lodo de la laguna salina."';
+      } else if (monument === 'Empresa') {
+        title.innerText = "Experiencia 3D del Negocio";
+        fact.innerText = '"Visualización interactiva del chinchorro o plato típico con geolocalización."';
+      } else {
+        title.innerText = "Monumento Cultural Riohacha";
+        fact.innerText = '"Experiencia inmersiva en Realidad Aumentada habilitada por Kashi."';
+      }
+      modal.style.display = 'flex';
+    }
+
+    function openEditModal() {
+      if (currentMode === 'user') {
+        document.getElementById('edit-modal').style.display = 'flex';
+      } else {
+        switchBizSubTab('profile_edit');
+        showToast('Abriendo formulario de edición comercial');
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    // Save Handlers
+    function saveUserProfile() {
+      const name = document.getElementById('edit-user-name').value;
+      const city = document.getElementById('edit-user-city').value;
+      document.getElementById('user-display-name').innerHTML = name + ' <span class="verified-icon">★</span>';
+      document.getElementById('user-display-sub').innerText = 'Explorador • ' + city;
+      closeModal('edit-modal');
+      showToast('Perfil de usuario actualizado');
+    }
+
+    function saveBusinessProfile() {
+      const name = document.getElementById('input-biz-name').value;
+      const desc = document.getElementById('input-biz-desc').value;
+      document.getElementById('biz-name').innerText = name;
+      showToast('Datos de empresa actualizados con éxito');
+    }
+
+    function handleReservation(resId, status) {
+      const row = document.getElementById(resId);
+      if (row) {
+        row.style.opacity = '0.5';
+        row.innerHTML = `<div class="item-icon-box">✓</div><div class="item-details"><div class="item-title">Reserva ${status}</div><div class="item-desc">Notificación enviada al turista</div></div><span class="badge-chip ${status === 'Aceptada' ? 'green' : 'orange'}">${status}</span>`;
+        showToast('Reserva marcada como ' + status);
+      }
+    }
+
+    function publishNewPromo() {
+      const title = document.getElementById('promo-title-input').value;
+      showToast('Promoción "' + title + '" publicada en el mapa');
+    }
+
+    function addNewProductItem() {
+      const list = document.getElementById('biz-products-list');
+      const newRow = document.createElement('div');
+      newRow.className = 'item-row';
+      newRow.innerHTML = `
+        <div class="item-icon-box">⭐</div>
+        <div class="item-details">
+          <div class="item-title">Nuevo Producto / Servicio</div>
+          <div class="item-desc">Item agregado recientemente al catálogo • $35.000 COP</div>
+        </div>
+        <button class="item-action-btn" onclick="showToast('Editando...')">Editar</button>
+      `;
+      list.prepend(newRow);
+      showToast('Nuevo producto agregado a tu vitrina');
+    }
+
+    function setLanguage(lang) {
+      const opts = document.querySelectorAll('.lang-opt');
+      opts.forEach(o => o.classList.remove('active'));
+      event.target.classList.add('active');
+      if (lang === 'way') {
+        showToast('Anaa aa’in! Modo Wayuunaiki activado');
+        document.getElementById('label-user-tab').innerText = 'Pütchipü Wayuu';
+        document.getElementById('label-biz-tab').innerText = 'Ayatawaa Empresa';
+      } else if (lang === 'en') {
+        showToast('English language selected');
+        document.getElementById('label-user-tab').innerText = 'Tourist Profile';
+        document.getElementById('label-biz-tab').innerText = 'Business Portal';
+      } else {
+        showToast('Idioma Español seleccionado');
+        document.getElementById('label-user-tab').innerText = 'Perfil Turista / Usuario';
+        document.getElementById('label-biz-tab').innerText = 'Perfil Empresa / Comercio';
+      }
+    }
+
+    // Initialize
+    applyTierFeatures();
+  </script>
+</body>
+</html>
